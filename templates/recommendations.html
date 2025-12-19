@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommendations for {{ anime.Name }}</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+    </style>
+</head>
+<body class="bg-gray-950 min-h-screen font-sans text-gray-100 selection:bg-orange-500 selection:text-black">
+    <div class="container mx-auto px-4 py-8">
+        <div class="mb-8">
+            <a href="{{ url_for('index') }}" class="inline-flex items-center text-orange-500 hover:text-orange-400 font-bold transition-colors uppercase tracking-wide text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Search
+            </a>
+        </div>
+
+        <div class="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden mb-12 border border-gray-800">
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/3 lg:w-1/4 h-96 md:h-auto relative">
+                    <img src="{{ anime['Image URL'] }}"
+                         class="w-full h-full object-cover" 
+                         alt="{{ anime.Name }}"
+                         onerror="this.src='/static/placeholder/placeholder.jpg'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60 md:hidden"></div>
+                    <div class="absolute top-4 left-4 bg-orange-500 text-black px-3 py-1 rounded-full text-sm font-bold shadow-md">
+                        {{ anime.Type if 'Type' in anime else 'TV' }}
+                    </div>
+                </div>
+                <div class="p-8 md:w-2/3 lg:w-3/4 flex flex-col justify-center relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-64 w-64 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/>
+                        </svg>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">{{ anime.Name }}</h1>
+                    
+                    <div class="flex flex-wrap gap-3 mb-8">
+                        {% if 'Genres' in anime %}
+                            {% for genre in anime.Genres %}
+                            <span class="bg-gray-800 text-orange-400 px-3 py-1 rounded text-sm font-bold border border-gray-700 uppercase tracking-wider hover:bg-gray-700 transition-colors cursor-default">
+                                {{ genre }}
+                            </span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="flex items-center gap-8 mb-8 text-gray-300 bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm w-fit border border-gray-700">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-500 uppercase font-bold">Score</span>
+                                <span class="text-2xl font-black text-white">{{ anime.Score if 'Score' in anime and anime.Score > 0 else 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-px bg-gray-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500 uppercase font-bold">Rank</span>
+                            <span class="text-2xl font-black text-white">#{{ anime.Rank if 'Rank' in anime else 'N/A' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="prose prose-invert max-w-none text-gray-400 leading-relaxed">
+                        <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-wide border-b border-gray-800 pb-2 inline-block">Synopsis</h3>
+                        <p>{{ anime.Synopsis if 'Synopsis' in anime and anime.Synopsis else 'No synopsis available.' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if not recommendations.empty %}
+        <div class="flex items-center gap-4 mb-8">
+            <div class="h-8 w-2 bg-orange-500 rounded-full"></div>
+            <h3 class="text-3xl font-bold text-white flex items-center gap-3">
+                Similar Anime You Might Like
+            </h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {% for _, rec in recommendations.iterrows() %}
+            <div class="bg-gray-900 rounded-xl overflow-hidden hover:shadow-orange-500/20 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full border border-gray-800 group">
+                <div class="relative h-64 overflow-hidden">
+                    <img src="{{ rec['Image URL'] }}"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                         alt="{{ rec.Name }}"
+                         onerror="this.src='/static/placeholder/placeholder.jpg'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute top-2 right-2 bg-orange-500 text-black text-xs font-black px-2 py-1 rounded shadow-lg">
+                        {{ "%.0f"|format(rec.similarity * 100) }}% MATCH
+                    </div>
+                </div>
+                <div class="p-4 flex flex-col flex-grow">
+                    <h5 class="text-md font-bold mb-2 line-clamp-2 h-12 text-white group-hover:text-orange-400 transition-colors" title="{{ rec.Name }}">{{ rec.Name }}</h5>
+                    <div class="flex justify-between items-center mb-3 text-xs text-gray-500">
+                        <span class="flex items-center gap-1 text-yellow-400 font-bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 fill-current" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            {{ rec.Score if rec.Score > 0 else 'N/A' }}
+                        </span>
+                        <span class="truncate max-w-[60%] bg-gray-800 px-2 py-0.5 rounded text-gray-400 border border-gray-700">{{ rec.Genres[0] if rec.Genres and rec.Genres|length > 0 else 'Anime' }}</span>
+                    </div>
+                    <a href="{{ url_for('recommend', anime_title=rec.Name) }}" class="mt-auto w-full block text-center bg-transparent border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-black font-bold py-1.5 px-4 rounded-lg transition-all duration-200 text-sm uppercase tracking-wide">
+                        View
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-gray-900 border-l-4 border-orange-500 p-6 rounded-r-lg shadow-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-orange-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-gray-300 font-medium">
+                        No recommendations found for this anime yet. Try searching for another title!
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="text-center mt-16 pb-8">
+            <a href="{{ url_for('index') }}" class="inline-block px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors uppercase tracking-wider border border-gray-700 hover:border-gray-600">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
