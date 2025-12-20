@@ -43,11 +43,20 @@ def load_data():
 
 def preprocess_data(anime):
     anime['genre_str'] = anime['Genres'].apply(lambda x: ' '.join(x))
-    anime['content'] = anime['genre_str'] + ' ' + anime['Synopsis'] + ' ' + anime['Type']
+    # Give heavy weight to Name (for sequels/seasons), moderate weight to genres/type, light weight to synopsis
+    # Repeat Name 5x, Genres 3x, Type 3x to ensure high similarity for same-series shows
+    anime['content'] = (anime['Name'] + ' ' + anime['Name'] + ' ' + anime['Name'] + ' ' + anime['Name'] + ' ' + anime['Name'] + ' ' +
+                       anime['genre_str'] + ' ' + anime['genre_str'] + ' ' + anime['genre_str'] + ' ' +
+                       anime['Type'] + ' ' + anime['Type'] + ' ' + anime['Type'] + ' ' +
+                       anime['Synopsis'])
     return anime
 
 def create_model(anime):
-    tfidf = TfidfVectorizer(stop_words='english', max_df=0.8, min_df=5)
+    # Use more permissive parameters to capture show-specific terms
+    # min_df=2: word must appear in at least 2 anime (catches show-specific terms)
+    # max_df=0.85: exclude words in more than 85% of anime (too common)
+    # max_features=5000: keep top 5000 most important features
+    tfidf = TfidfVectorizer(stop_words='english', max_df=0.85, min_df=2, max_features=5000)
     tfidf_matrix = tfidf.fit_transform(anime['content'])
     return cosine_similarity(tfidf_matrix, tfidf_matrix)
 
