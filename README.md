@@ -2,6 +2,10 @@
 
 A modern Flask-based anime recommendation system using content-based filtering (TF-IDF + cosine similarity) and a responsive UI with Tailwind CSS v4.
 
+## 📋 CV-Ready Description
+
+**Full-stack anime recommendation web application** leveraging **machine learning** (scikit-learn's TF-IDF vectorization and cosine similarity) for content-based filtering on a 20,000+ anime dataset. Built with **Python/Flask backend**, **RESTful routing**, **Jinja2 templating**, and **Tailwind CSS v4** frontend featuring real-time search, personalized recommendations, and responsive UI. Implements **model persistence** with pickle serialization for optimized performance and **data preprocessing pipelines** using pandas/numpy for large-scale dataset processing.
+
 ## ✨ Features
 
 - 🔍 **Smart Search**: Search anime by name, genre, or synopsis
